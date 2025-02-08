@@ -1,0 +1,50 @@
+default_language_version:
+  python: python3.12
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+      - id: check-ast
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: end-of-file-fixer
+        exclude_types: [svg, css, html, less, javascript, json, coffee, map, markdown, pem]
+  - repo: local
+    hooks:
+      - id: isort
+        name: isort
+        entry: .venv/bin/isort
+        language: python
+        types: [ python ]
+        args: []
+        require_serial: false
+        additional_dependencies: []
+
+      - id: ruff_format
+        name: ruff format
+        entry: .venv/bin/ruff
+        language: python
+        types: [ python ]
+        args: [ format ]
+        exclude: notification_service/src/db/migrations/
+        require_serial: false
+        additional_dependencies: [ ]
+
+      - id: ruff_lint
+        name: ruff lint
+        entry: .venv/bin/ruff
+        language: python
+        types: [ python ]
+        args: [ check ]
+        exclude: notification_service/src/db/migrations/
+        require_serial: false
+        additional_dependencies: []
+
+      - id: mypy
+        name: mypy
+        entry: .venv/bin/mypy
+        language: python
+        types: [ python ]
+        args: [--config-file, pyproject.toml]
+        require_serial: false
+        additional_dependencies: []

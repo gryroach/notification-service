@@ -1,0 +1,60 @@
+name: UGC API
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.11, 3.12, 3.13]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        pip install "mypy>=1.15.0" "ruff>=0.9.5" "sqlalchemy[mypy]>=2.0.38"
+
+    - name: Lint with ruff
+      run: |
+        ruff check --exclude research --output-format=github
+
+    - name: Lint with mypy
+      run: |
+        mypy --config-file ugc_api/pyproject.toml --exclude research .
+
+  notify:
+    needs: lint
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && success()
+
+    steps:
+    - name: Send Telegram notification
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_CHAT_ID }}
+        token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        message: |
+          ✅ Изменения успешно влиты в main!
+
+          Repository: ${{ github.repository }}
+          Branch: ${{ github.head_ref || github.ref_name }}
+
+          Commit: ${{ github.sha }}
+          ${{ github.event.commits[0].message }}
+
+          Details: https://github.com/${{ github.repository }}/commit/${{github.sha}}
