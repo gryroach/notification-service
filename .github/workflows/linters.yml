@@ -1,4 +1,4 @@
-name: UGC API
+name: Notifications Service
 
 on:
   push:
@@ -31,11 +31,11 @@ jobs:
 
     - name: Lint with ruff
       run: |
-        ruff check --exclude research --output-format=github
+        ruff check --exclude notification_service/src/db/migrations/ --output-format=github
 
     - name: Lint with mypy
       run: |
-        mypy --config-file ugc_api/pyproject.toml --exclude research .
+        mypy --exclude notification_service/src/db/migrations/ .
 
   notify:
     needs: lint
