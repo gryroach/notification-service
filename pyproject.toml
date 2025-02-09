@@ -7,8 +7,10 @@ requires-python = ">=3.12"
 dependencies = [
     "alembic>=1.14.1",
     "asyncpg>=0.30.0",
+    "croniter>=6.0.0",
     "fastapi[standard]>=0.115.8",
     "orjson>=3.10.15",
+    "psycopg>=3.1.18",
     "pydantic-settings>=2.7.1",
     "pyjwt[crypto]>=2.10.1",
     "redis>=5.2.1",
@@ -25,12 +27,46 @@ dev = [
     "sqlalchemy[mypy]>=2.0.38",
 ]
 
-[tool.ruff.lint.pylint]
-max-args = 7
-
 [tool.ruff]
-line-length = 119
 exclude = [".venv", "./notification_service/src/db/migrations/"]
+line-length = 119
+indent-width = 4
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "C",   # flake8-comprehensions
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade
+    "RUF", # ruff-specific rules
+    "TID", # flake8-tidy-imports
+    "TCH", # flake8-type-checking
+    "PTH", # flake8-use-pathlib
+    "PL"   # pylint
+]
+ignore = [
+    "RUF002",  # Игнорируем проверку кириллицы в докстрингах
+    "RUF003",  # Игнорируем проверку кириллицы в комментариях
+    "I001"     # Игнорируем проверку сортировки импортов, так как используем isort
+]
+mccabe = { max-complexity = 10 }
+pydocstyle = { convention = "google" }
+pylint = { max-args = 6 }
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+force-sort-within-sections = true
+known-first-party = ["api", "core", "db", "documents", "exceptions", "middlewares", "services", "main", "handlers", "models", "domain", "repositories"]
+lines-after-imports = 2
+relative-imports-order = "closest-to-furthest"
+split-on-trailing-comma = true
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402"]
 
 [tool.mypy]
 python_version = "3.12"
@@ -49,11 +85,11 @@ force_grid_wrap = 0
 use_parentheses = true
 ensure_newline_before_comments = true
 line_length = 119
-skip = [".venv"]
+skip = [".venv", "notification_service/src/db/migrations/"]
 combine_as_imports = true
-balanced_wrapping = true
 sections = ["STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
-known_first_party = ["api", "core", "db", "documents", "exceptions", "middlewares", "services", "main", "handlers"]
+known_first_party = ["src"]
+known_third_party = ["sqlalchemy", "pydantic", "asyncpg", "croniter", "alembic"]
 import_heading_stdlib = "stdlib"
 import_heading_thirdparty = "thirdparty"
 import_heading_firstparty = "project"

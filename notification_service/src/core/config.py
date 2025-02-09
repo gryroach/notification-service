@@ -1,5 +1,6 @@
 # stdlib
 from logging import config as logging_config
+from pathlib import Path
 
 # thirdparty
 from dotenv import find_dotenv, load_dotenv
@@ -7,7 +8,7 @@ from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # project
-from core.logger import LOGGING
+from src.core.logger import LOGGING
 
 logging_config.dictConfig(LOGGING)
 DOTENV_PATH = find_dotenv(".env")
@@ -64,12 +65,12 @@ class AppSettings(BaseSettings):
     @property
     def jwt_public_key(self) -> str:
         try:
-            with open(self.jwt_public_key_path) as key_file:
+            with Path(self.jwt_public_key_path).open() as key_file:
                 return key_file.read()
         except FileNotFoundError as err:
             raise ValueError(f"Public key file not found at: {self.jwt_public_key_path}") from err
         except Exception as err:
-            raise ValueError(f"Error reading public key: {str(err)}") from err
+            raise ValueError(f"Error reading public key: {err!s}") from err
 
 
 settings = AppSettings()

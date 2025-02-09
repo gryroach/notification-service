@@ -1,5 +1,5 @@
 # project
-from exceptions.base import CustomException
+from src.exceptions.base import CustomException
 
 
 class AuthError(CustomException):
