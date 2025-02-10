@@ -8,7 +8,7 @@ from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # project
-from src.core.logger import LOGGING
+from core.logger import LOGGING
 
 logging_config.dictConfig(LOGGING)
 DOTENV_PATH = find_dotenv(".env")
@@ -34,6 +34,7 @@ class AppSettings(BaseSettings):
 
     # Sentry
     sentry_dsn: str = Field(default="")
+    sentry_traces_sample_rate: float = Field(default=1.0)
 
     # Работа с токенами
     jwt_algorithm: str = Field(default="RS256")

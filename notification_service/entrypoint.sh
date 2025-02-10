@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-# Generate new migrations if needed
-echo "Генерируем новые миграции на основе изменений в моделях..."  
-uv run alembic revision --autogenerate -m "Automatically generated migration"
-
 # Apply database migrations
 echo "Применяем миграции базы данных..."
 uv run alembic upgrade head

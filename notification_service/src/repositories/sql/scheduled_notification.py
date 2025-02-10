@@ -1,5 +1,6 @@
 # stdlib
 from datetime import datetime
+from typing import Any
 from uuid import UUID
 
 # thirdparty
@@ -7,13 +8,16 @@ from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 # project
-from src.domain.interfaces.repositories import IScheduledNotificationRepository
-from src.models import ScheduledNotification
-from src.repositories.sql.base import BaseCRUDRepository
+from models import ScheduledNotification
+from repositories.sql.base import BaseCRUDRepository
+from repositories.sql.interfaces.repositories import (
+    IScheduledNotificationRepository,
+)
 
 
 class ScheduledNotificationRepository(
-    BaseCRUDRepository[ScheduledNotification], IScheduledNotificationRepository[ScheduledNotification]
+    BaseCRUDRepository[ScheduledNotification, Any, Any],
+    IScheduledNotificationRepository[ScheduledNotification, Any, Any],
 ):
     """Репозиторий для работы с запланированными уведомлениями."""
 
@@ -28,33 +32,9 @@ class ScheduledNotificationRepository(
                 and_(
                     self.model.is_sent.is_(False),
                     self.model.scheduled_time <= current_time,
-                    self.model.next_retry_time.is_(None),
-                    self.model.retry_count < self.model.max_retries,
                 )
             )
             .order_by(self.model.scheduled_time)
-        )
-
-        if limit:
-            query = query.limit(limit)
-
-        result = await self.session.execute(query)
-        return list(result.scalars().all())
-
-    async def get_pending_retries(
-        self, current_time: datetime, limit: int | None = None
-    ) -> list[ScheduledNotification]:
-        """Получает список уведомлений для повторной отправки."""
-        query = (
-            select(self.model)
-            .where(
-                and_(
-                    self.model.is_sent.is_(False),
-                    self.model.next_retry_time <= current_time,
-                    self.model.retry_count < self.model.max_retries,
-                )
-            )
-            .order_by(self.model.next_retry_time)
         )
 
         if limit:
@@ -69,7 +49,6 @@ class ScheduledNotificationRepository(
             and_(
                 self.model.id.in_(ids),
                 self.model.is_sent.is_(False),
-                self.model.retry_count < self.model.max_retries,
             )
         )
         result = await self.session.execute(query)

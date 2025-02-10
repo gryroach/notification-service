@@ -6,9 +6,13 @@ from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
 # project
-from src.models import PeriodicNotification, ScheduledNotification
-from src.repositories.sql.periodic_notification import PeriodicNotificationRepository
-from src.repositories.sql.scheduled_notification import ScheduledNotificationRepository
+from models import PeriodicNotification, ScheduledNotification
+from repositories.sql.periodic_notification import (
+    PeriodicNotificationRepository,
+)
+from repositories.sql.scheduled_notification import (
+    ScheduledNotificationRepository,
+)
 
 
 class NotificationStateService:
@@ -35,14 +39,16 @@ class NotificationStateService:
 
         next_run_time = notification.calculate_next_run(last_run_time)
         await self.periodic_repo.update(
-            notification_id,
-            last_run_time=last_run_time or datetime.now(UTC),
-            next_run_time=next_run_time,
+            db_obj=notification,
+            obj_in={
+                "last_run_time": last_run_time or datetime.now(UTC),
+                "next_run_time": next_run_time,
+            },
         )
 
     async def get_user_periodic(self, user_id: UUID) -> list[PeriodicNotification]:
         """Получает список периодических уведомлений пользователя."""
-        return await self.periodic_repo.get_by_user(user_id)
+        return await self.periodic_repo.get_by_field_multi("subscribers", user_id)
 
     async def get_pending_scheduled(
         self, current_time: datetime, batch_size: int = 100
@@ -52,21 +58,34 @@ class NotificationStateService:
 
     async def get_user_scheduled(self, user_id: UUID) -> list[ScheduledNotification]:
         """Получает список запланированных уведомлений пользователя."""
-        return await self.scheduled_repo.get_by_user(user_id)
+        return await self.scheduled_repo.get_by_field_multi("subscribers", user_id)
 
     async def mark_scheduled_sent(self, notification_id: UUID) -> None:
         """Отмечает запланированное уведомление как отправленное."""
+        notification = await self.scheduled_repo.get(notification_id)
+        if not notification:
+            return
+
         await self.scheduled_repo.update(
-            notification_id,
-            is_sent=True,
+            db_obj=notification,
+            obj_in={"is_sent": True},
         )
 
-    async def mark_scheduled_for_retry(
-        self, notification_id: UUID, next_retry_time: datetime, retry_count: int
+    async def update_scheduled_retry(
+        self,
+        notification_id: UUID,
+        next_retry_time: datetime,
+        retry_count: int,
     ) -> None:
-        """Отмечает уведомление для повторной попытки."""
+        """Обновляет данные о повторной отправке запланированного уведомления."""
+        notification = await self.scheduled_repo.get(notification_id)
+        if not notification:
+            return
+
         await self.scheduled_repo.update(
-            notification_id,
-            next_retry_time=next_retry_time,
-            retry_count=retry_count,
+            db_obj=notification,
+            obj_in={
+                "next_retry_time": next_retry_time,
+                "retry_count": retry_count,
+            },
         )

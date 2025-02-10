@@ -1,5 +1,6 @@
 # stdlib
 from datetime import datetime
+from typing import Any
 from uuid import UUID
 
 # thirdparty
@@ -7,13 +8,16 @@ from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 # project
-from src.domain.interfaces.repositories import IPeriodicNotificationRepository
-from src.models import PeriodicNotification
-from src.repositories.sql.base import BaseCRUDRepository
+from models import PeriodicNotification
+from repositories.sql.base import BaseCRUDRepository
+from repositories.sql.interfaces.repositories import (
+    IPeriodicNotificationRepository,
+)
 
 
 class PeriodicNotificationRepository(
-    BaseCRUDRepository[PeriodicNotification], IPeriodicNotificationRepository[PeriodicNotification]
+    BaseCRUDRepository[PeriodicNotification, Any, Any],
+    IPeriodicNotificationRepository[PeriodicNotification, Any, Any],
 ):
     """Репозиторий для работы с периодическими уведомлениями."""
 
@@ -47,5 +51,11 @@ class PeriodicNotificationRepository(
                 self.model.is_active.is_(True),
             )
         )
+        result = await self.session.execute(query)
+        return list(result.scalars().all())
+
+    async def get_active(self) -> list[PeriodicNotification]:
+        """Получает список активных периодических уведомлений."""
+        query = select(self.model).where(self.model.is_active.is_(True))
         result = await self.session.execute(query)
         return list(result.scalars().all())

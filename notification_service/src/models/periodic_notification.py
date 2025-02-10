@@ -4,26 +4,27 @@ from uuid import UUID
 
 # thirdparty
 from croniter import croniter
-from sqlalchemy import ARRAY, DateTime, ForeignKey, Index, String, Text
+from domain.enums import NotificationType
+from sqlalchemy import JSON, DateTime, ForeignKey, Index, String
+from sqlalchemy.dialects.postgresql import ARRAY, UUID as PG_UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 # project
-from src.domain.enums import NotificationType
-from src.models.base import Base
+from models.base import Base
 
 
 class PeriodicNotification(Base):
     """Модель периодического уведомления."""
 
-    staff_id: Mapped[UUID] = mapped_column(String(36), nullable=False)
-    subscribers: Mapped[list[UUID]] = mapped_column(ARRAY(String(36)), nullable=False)
+    staff_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), nullable=False)
+    subscribers: Mapped[list[UUID]] = mapped_column(ARRAY(PG_UUID(as_uuid=True)), nullable=False)
     template_id: Mapped[UUID] = mapped_column(ForeignKey("template.id"), nullable=False)
     notification_type: Mapped[NotificationType] = mapped_column(nullable=False)
     cron_schedule: Mapped[str] = mapped_column(String(100), nullable=False)
     last_run_time: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     next_run_time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     is_active: Mapped[bool] = mapped_column(default=True)
-    context: Mapped[dict] = mapped_column(Text, nullable=True)
+    context: Mapped[dict] = mapped_column(JSON, nullable=True)
     stop_date: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
     # Индексы для оптимизации запросов

@@ -9,11 +9,11 @@ from fastapi.responses import ORJSONResponse
 from redis.asyncio import Redis
 
 # project
-from src.api.v1 import api_router as api_v1_router
-from src.core.config import settings
-from src.db import redis
-from src.handlers import exception_handlers
-from src.middlewares.request_id import request_id_require
+from api.v1 import api_router as api_v1_router
+from core.config import settings
+from db import redis
+from handlers import exception_handlers
+from middlewares.request_id import request_id_require
 
 if settings.sentry_dsn:
     sentry_sdk.init(

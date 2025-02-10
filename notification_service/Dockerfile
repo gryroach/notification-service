@@ -8,7 +8,7 @@ WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV PYTHONPATH="/app"
+ENV PYTHONPATH="./src"
 
 # Copy dependencies into the container.
 COPY pyproject.toml .
@@ -17,7 +17,7 @@ COPY alembic.ini .
 RUN uv sync --frozen --no-cache
 
 # Copy the application into the container.
-COPY ./notification_service/src ./src
+COPY ./notification_service/src .
 COPY ./notification_service/keys ./keys
 COPY ./notification_service/entrypoint.sh .
 

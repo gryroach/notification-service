@@ -8,7 +8,7 @@ from starlette import status
 from starlette.responses import JSONResponse, Response
 
 # project
-from src.exceptions.auth_exceptions import AuthError
+from exceptions.auth_exceptions import AuthError
 
 
 async def auth_exception_handler(_: Request, exc: AuthError) -> JSONResponse:
@@ -26,6 +26,12 @@ async def http_error_handler(_: Request, exc: Exception) -> JSONResponse:
     )
 
 
-exception_handlers: dict[int | type[Exception], Callable[[Request, Any], Coroutine[Any, Any, Response]]] | None = {
+exception_handlers: (
+    dict[
+        int | type[Exception],
+        Callable[[Request, Any], Coroutine[Any, Any, Response]],
+    ]
+    | None
+) = {
     AuthError: auth_exception_handler,
 }
