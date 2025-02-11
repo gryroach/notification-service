@@ -13,6 +13,7 @@ ENV PYTHONPATH="./src"
 # Copy dependencies into the container.
 COPY pyproject.toml .
 COPY uv.lock .
+COPY alembic.ini .
 RUN uv sync --frozen --no-cache
 
 # Copy the application into the container.

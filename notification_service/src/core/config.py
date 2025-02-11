@@ -1,5 +1,6 @@
 # stdlib
 from logging import config as logging_config
+from pathlib import Path
 
 # thirdparty
 from dotenv import find_dotenv, load_dotenv
@@ -33,6 +34,7 @@ class AppSettings(BaseSettings):
 
     # Sentry
     sentry_dsn: str = Field(default="")
+    sentry_traces_sample_rate: float = Field(default=1.0)
 
     # Работа с токенами
     jwt_algorithm: str = Field(default="RS256")
@@ -64,12 +66,12 @@ class AppSettings(BaseSettings):
     @property
     def jwt_public_key(self) -> str:
         try:
-            with open(self.jwt_public_key_path) as key_file:
+            with Path(self.jwt_public_key_path).open() as key_file:
                 return key_file.read()
         except FileNotFoundError as err:
             raise ValueError(f"Public key file not found at: {self.jwt_public_key_path}") from err
         except Exception as err:
-            raise ValueError(f"Error reading public key: {str(err)}") from err
+            raise ValueError(f"Error reading public key: {err!s}") from err
 
 
 settings = AppSettings()

@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Apply database migrations
+echo "Применяем миграции базы данных..."
+uv run alembic upgrade head
+
 # Run the application.
 if [ "$UGC_API_PRODUCTION" = "true" ]; then
   # https://fastapi.tiangolo.com/deployment/docker/#replication-number-of-processes

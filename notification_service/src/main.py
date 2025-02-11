@@ -17,8 +17,8 @@ from middlewares.request_id import request_id_require
 
 if settings.sentry_dsn:
     sentry_sdk.init(
-        dsn=str(settings.sentry_dsn),
-        traces_sample_rate=1.0,
+        dsn=settings.sentry_dsn,
+        traces_sample_rate=settings.sentry_traces_sample_rate,
     )
 
 

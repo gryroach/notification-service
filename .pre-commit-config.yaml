@@ -8,18 +8,19 @@ repos:
       - id: check-case-conflict
       - id: check-merge-conflict
       - id: end-of-file-fixer
+        exclude: notification_service/src/db/migrations/
         exclude_types: [svg, css, html, less, javascript, json, coffee, map, markdown, pem]
-  - repo: local
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
     hooks:
       - id: isort
         name: isort
-        entry: .venv/bin/isort
-        language: python
-        types: [ python ]
-        args: []
-        require_serial: false
-        additional_dependencies: []
+        args: ["--profile", "black", "--filter-files"]
+        exclude: notification_service/src/db/migrations/
 
+  - repo: local
+    hooks:
       - id: ruff_format
         name: ruff format
         entry: .venv/bin/ruff

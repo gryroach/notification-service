@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.11, 3.12, 3.13]
+        python-version: ["3.11", "3.12", "3.13"]
 
     steps:
     - name: Checkout code
@@ -27,15 +27,23 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        pip install "mypy>=1.15.0" "ruff>=0.9.5" "sqlalchemy[mypy]>=2.0.38"
+        pip install "isort>=6.0.0" "mypy>=1.15.0" "ruff>=0.9.5" "sqlalchemy[mypy]>=2.0.38" "types-croniter==5.0.1.20241205"
 
-    - name: Lint with ruff
+    - name: Run isort
       run: |
-        ruff check --exclude notification_service/src/db/migrations/ --output-format=github
+        isort --check-only --diff .
 
-    - name: Lint with mypy
+    - name: Run ruff format
       run: |
-        mypy --exclude notification_service/src/db/migrations/ .
+        ruff format --check --exclude notification_service/src/db/migrations/ .
+
+    - name: Run ruff lint
+      run: |
+        ruff check --exclude notification_service/src/db/migrations/ --output-format=github .
+
+    - name: Run mypy
+      run: |
+        mypy --config-file pyproject.toml .
 
   notify:
     needs: lint
