@@ -61,5 +61,20 @@ services:
       timeout: 3s
       retries: 50
 
+  rabbitmq:
+    image: rabbitmq:4.0.5-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    env_file:
+      - ./.env
+    environment:
+      RABBITMQ_DEFAULT_USER: ${NOTIFY_RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${NOTIFY_RABBITMQ_PASSWORD}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
 volumes:
   notification_data:
+  rabbitmq_data:
