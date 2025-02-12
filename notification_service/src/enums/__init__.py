@@ -1,5 +1,5 @@
-# thirdparty
-from domain.enums import NotificationType
+# project
+from enums.db import NotificationType
 
 __all__ = [
     "NotificationType",

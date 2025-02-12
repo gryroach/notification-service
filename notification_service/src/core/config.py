@@ -36,6 +36,12 @@ class AppSettings(BaseSettings):
     sentry_dsn: str = Field(default="")
     sentry_traces_sample_rate: float = Field(default=1.0)
 
+    # RabbitMQ
+    rabbitmq_host: str = Field(default="rabbitmq")
+    rabbitmq_port: int = Field(default=5672)
+    rabbitmq_user: str = Field(default="guest")
+    rabbitmq_password: str = Field(default="password")
+
     # Работа с токенами
     jwt_algorithm: str = Field(default="RS256")
     jwt_public_key_path: str = Field(default="/app/keys/example_public_key.pem")
@@ -62,6 +68,10 @@ class AppSettings(BaseSettings):
     @property
     def redis_url(self) -> str:
         return f"redis://{self.redis_host}:{self.redis_port}/{self.redis_db}"
+
+    @property
+    def rabbitmq_url(self) -> str:
+        return f"amqp://{self.rabbitmq_user}:{self.rabbitmq_password}@{self.rabbitmq_host}:{self.rabbitmq_port}/"
 
     @property
     def jwt_public_key(self) -> str:
