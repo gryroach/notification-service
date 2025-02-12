@@ -14,7 +14,7 @@ ENV PYTHONPATH="./src"
 COPY pyproject.toml .
 COPY uv.lock .
 COPY alembic.ini .
-RUN uv sync --frozen --no-cache
+RUN uv sync --frozen --no-cache --no-group dev
 
 # Copy the application into the container.
 COPY ./notification_service/src .

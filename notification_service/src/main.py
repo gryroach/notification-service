@@ -14,6 +14,7 @@ from core.config import settings
 from db import redis
 from handlers import exception_handlers
 from middlewares.request_id import request_id_require
+from services.rabbitmq import RabbitMQService
 
 if settings.sentry_dsn:
     sentry_sdk.init(
@@ -24,12 +25,15 @@ if settings.sentry_dsn:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator:
+    rabbitmq_service = RabbitMQService()
+    await rabbitmq_service.init_queues()
     redis.redis = Redis.from_url(settings.redis_url)
     try:
         yield
     finally:
         if redis.redis is not None:
             await redis.redis.aclose()
+        await rabbitmq_service.close()
 
 
 app = FastAPI(

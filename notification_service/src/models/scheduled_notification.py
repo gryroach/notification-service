@@ -3,12 +3,12 @@ from datetime import datetime
 from uuid import UUID
 
 # thirdparty
-from domain.enums import NotificationType
 from sqlalchemy import JSON, DateTime, ForeignKey, Index
 from sqlalchemy.dialects.postgresql import ARRAY, UUID as PG_UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 # project
+from enums import NotificationType
 from models.base import Base
 
 
