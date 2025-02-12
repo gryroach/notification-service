@@ -21,11 +21,11 @@ class PeriodicNotification(Base):
     template_id: Mapped[UUID] = mapped_column(ForeignKey("template.id"), nullable=False)
     notification_type: Mapped[NotificationType] = mapped_column(nullable=False)
     cron_schedule: Mapped[str] = mapped_column(String(100), nullable=False)
-    last_run_time: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
-    next_run_time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    last_run_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    next_run_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     is_active: Mapped[bool] = mapped_column(default=True)
     context: Mapped[dict] = mapped_column(JSON, nullable=True)
-    stop_date: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    stop_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     # Индексы для оптимизации запросов
     __table_args__ = (

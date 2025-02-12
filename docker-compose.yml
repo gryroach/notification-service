@@ -10,6 +10,7 @@ services:
       - ./.env
     expose:
       - "8000"
+    command: bash entrypoint-api.sh
     volumes:
       - ./notification_service/src:/app/src
     depends_on:
@@ -72,8 +73,31 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: ${NOTIFY_RABBITMQ_USER}
       RABBITMQ_DEFAULT_PASS: ${NOTIFY_RABBITMQ_PASSWORD}
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+
+  worker-scheduler:
+    build:
+      context: .
+      dockerfile: ./notification_service/Dockerfile
+    container_name: notification_worker_scheduler
+    env_file:
+      - ./.env
+    command: bash entrypoint-worker.sh scheduler
+    volumes:
+      - ./notification_service/src:/app/src
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
 
 volumes:
   notification_data:

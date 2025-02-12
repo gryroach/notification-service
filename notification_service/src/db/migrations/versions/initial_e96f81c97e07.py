@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: f739eed7aab7
+Revision ID: e96f81c97e07
 Revises: 
-Create Date: 2025-02-10 18:29:55.420918
+Create Date: 2025-02-12 18:47:01.502385
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = 'f739eed7aab7'
+revision: str = 'e96f81c97e07'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -36,11 +36,11 @@ def upgrade() -> None:
     sa.Column('template_id', sa.UUID(), nullable=False),
     sa.Column('notification_type', sa.Enum('EMAIL', 'SMS', 'PUSH', name='notificationtype'), nullable=False),
     sa.Column('cron_schedule', sa.String(length=100), nullable=False),
-    sa.Column('last_run_time', sa.DateTime(), nullable=True),
-    sa.Column('next_run_time', sa.DateTime(), nullable=False),
+    sa.Column('last_run_time', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('next_run_time', sa.DateTime(timezone=True), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('context', sa.JSON(), nullable=True),
-    sa.Column('stop_date', sa.DateTime(), nullable=True),
+    sa.Column('stop_date', sa.DateTime(timezone=True), nullable=True),
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
@@ -55,7 +55,7 @@ def upgrade() -> None:
     sa.Column('subscribers', postgresql.ARRAY(sa.UUID()), nullable=False),
     sa.Column('template_id', sa.UUID(), nullable=False),
     sa.Column('notification_type', sa.Enum('EMAIL', 'SMS', 'PUSH', name='notificationtype'), nullable=False),
-    sa.Column('scheduled_time', sa.DateTime(), nullable=False),
+    sa.Column('scheduled_time', sa.DateTime(timezone=True), nullable=False),
     sa.Column('is_sent', sa.Boolean(), nullable=False),
     sa.Column('context', sa.JSON(), nullable=True),
     sa.Column('id', sa.UUID(), nullable=False),

@@ -19,7 +19,7 @@ class ScheduledNotification(Base):
     subscribers: Mapped[list[UUID]] = mapped_column(ARRAY(PG_UUID(as_uuid=True)), nullable=False)
     template_id: Mapped[UUID] = mapped_column(ForeignKey("template.id"), nullable=False)
     notification_type: Mapped[NotificationType] = mapped_column(nullable=False)
-    scheduled_time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    scheduled_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     is_sent: Mapped[bool] = mapped_column(default=False)
     context: Mapped[dict] = mapped_column(JSON, nullable=True)
 
