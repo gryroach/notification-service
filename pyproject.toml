@@ -31,7 +31,6 @@ dev = [
 ]
 
 [tool.ruff]
-exclude = [".venv", "./notification_service/src/db/migrations/"]
 line-length = 119
 indent-width = 4
 target-version = "py312"
@@ -66,7 +65,7 @@ ignore_missing_imports = true
 disallow_untyped_calls = true
 disallow_untyped_defs = true
 plugins = ["sqlalchemy.ext.mypy.plugin"]
-exclude = "notification_service/src/db/migrations/"
+namespace_packages = true
 
 [tool.isort]
 profile = "black"

@@ -62,6 +62,7 @@ uv pip install -r requirements.txt
 
 ```
 bash
+pre-commit run --all-files
 ruff check .
 mypy .
 isort .
