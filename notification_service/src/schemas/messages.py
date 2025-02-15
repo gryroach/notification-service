@@ -5,12 +5,12 @@ from uuid import UUID
 from pydantic import BaseModel
 
 # project
-from enums.db import EventType, NotificationType
+from enums.db import ChannelType, EventType
 
 
 class Message(BaseModel):
     event_type: EventType
-    notification_type: NotificationType = NotificationType.EMAIL
+    notification_type: ChannelType = ChannelType.EMAIL
     template_id: UUID
     context: dict
     subscribers: list[UUID]

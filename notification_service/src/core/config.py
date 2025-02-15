@@ -46,6 +46,21 @@ class AppSettings(BaseSettings):
     jwt_algorithm: str = Field(default="RS256")
     jwt_public_key_path: str = Field(default="/app/keys/example_public_key.pem")
 
+    # Настройки ARQ
+    arq_job_timeout: int = Field(default=300)
+    arq_job_keep_result: int = Field(default=3600)
+    arq_max_jobs: int = Field(default=10)
+
+    # Настройки расписания для воркеров
+    periodic_schedule: str = Field(default="* * * * *")  # Каждую минуту
+    scheduled_schedule: str = Field(default="* * * * *")  # Каждую минуту
+
+    # Настройки для пакетной обработки
+    scheduled_batch_size: int = Field(
+        default=100,
+        description="Размер пакета для обработки запланированных уведомлений",
+    )
+
     # Другие настройки
     test_mode: bool = Field(default=False)
 

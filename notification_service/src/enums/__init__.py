@@ -1,6 +1,6 @@
 # project
-from enums.db import NotificationType
+from enums.db import ChannelType
 
 __all__ = [
-    "NotificationType",
+    "ChannelType",
 ]

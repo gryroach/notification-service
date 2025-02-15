@@ -4,7 +4,7 @@ from typing import Any
 from uuid import UUID
 
 # thirdparty
-from sqlalchemy import and_, select
+from sqlalchemy import and_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 # project
@@ -24,8 +24,24 @@ class PeriodicNotificationRepository(
     def __init__(self, session: AsyncSession):
         super().__init__(PeriodicNotification, session)
 
+    async def update_active_status(self, current_time: datetime) -> None:
+        """Обновляет статус is_active на основе stop_date."""
+        await self.session.execute(
+            update(self.model)
+            .where(
+                and_(
+                    self.model.is_active.is_(True),
+                    self.model.stop_date <= current_time,
+                )
+            )
+            .values(is_active=False)
+        )
+        await self.session.commit()
+
     async def get_pending(self, current_time: datetime, limit: int | None = None) -> list[PeriodicNotification]:
         """Получает список уведомлений, готовых к отправке."""
+        await self.update_active_status(current_time)
+
         query = (
             select(self.model)
             .where(

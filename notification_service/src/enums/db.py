@@ -5,7 +5,7 @@ from enum import StrEnum
 from services.priorities import priority_levels
 
 
-class NotificationType(StrEnum):
+class ChannelType(StrEnum):
     """Типы уведомлений, поддерживаемые системой."""
 
     EMAIL = "email"
