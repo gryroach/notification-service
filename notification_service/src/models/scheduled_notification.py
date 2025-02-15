@@ -9,7 +9,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 # project
 from enums import ChannelType
-from enums.db import EventType  # Added import for EventType
+from enums.db import EventType
 from models.base import Base
 
 
@@ -26,7 +26,6 @@ class ScheduledNotification(Base):
     subscriber_query_type: Mapped[str] = mapped_column(String(50), nullable=False)
     subscriber_query_params: Mapped[dict] = mapped_column(JSON, nullable=True)
 
-    # Обновленные индексы
     __table_args__ = (
         # Для поиска неотправленных уведомлений с ближайшим временем отправки
         Index(

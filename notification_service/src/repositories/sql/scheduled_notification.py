@@ -1,6 +1,5 @@
 # stdlib
 from datetime import datetime
-from typing import Any
 from uuid import UUID
 
 # thirdparty
@@ -13,11 +12,15 @@ from repositories.sql.base import BaseCRUDRepository
 from repositories.sql.interfaces.repositories import (
     IScheduledNotificationRepository,
 )
+from schemas.scheduled_notifications import (
+    ScheduledNotificationCreate,
+    ScheduledNotificationUpdate,
+)
 
 
 class ScheduledNotificationRepository(
-    BaseCRUDRepository[ScheduledNotification, Any, Any],
-    IScheduledNotificationRepository[ScheduledNotification, Any, Any],
+    BaseCRUDRepository[ScheduledNotification, ScheduledNotificationCreate, ScheduledNotificationUpdate],
+    IScheduledNotificationRepository[ScheduledNotification, ScheduledNotificationCreate, ScheduledNotificationUpdate],
 ):
     """Репозиторий для работы с запланированными уведомлениями."""
 

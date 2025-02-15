@@ -13,10 +13,10 @@ ENV PYTHONPATH="./src"
 # Copy dependencies into the container.
 COPY pyproject.toml .
 COPY uv.lock .
-COPY alembic.ini .
 RUN uv sync --frozen --no-cache --no-group dev
 
 # Copy the application into the container.
+COPY ./notification_service/alembic.ini .
 COPY ./notification_service/src .
 COPY ./notification_service/keys ./keys
 COPY ./notification_service/entrypoint-api.sh .

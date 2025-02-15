@@ -1,16 +1,16 @@
 # thirdparty
-from schemas.templates import CreateTemplate, UpdateTemplate
 from sqlalchemy.ext.asyncio import AsyncSession
 
 # project
 from models import Template
 from repositories.sql.base import BaseCRUDRepository
 from repositories.sql.interfaces.repositories import ITemplateRepository
+from schemas.templates import TemplateCreate, TemplateUpdate
 
 
 class TemplateRepository(
-    BaseCRUDRepository[Template, CreateTemplate, UpdateTemplate],
-    ITemplateRepository[Template, CreateTemplate, UpdateTemplate],
+    BaseCRUDRepository[Template, TemplateCreate, TemplateUpdate],
+    ITemplateRepository[Template, TemplateCreate, TemplateUpdate],
 ):
     """Репозиторий для работы с запланированными уведомлениями."""
 

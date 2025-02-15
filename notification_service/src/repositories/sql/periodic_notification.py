@@ -1,6 +1,5 @@
 # stdlib
 from datetime import datetime
-from typing import Any
 from uuid import UUID
 
 # thirdparty
@@ -13,11 +12,15 @@ from repositories.sql.base import BaseCRUDRepository
 from repositories.sql.interfaces.repositories import (
     IPeriodicNotificationRepository,
 )
+from schemas.periodic_notifications import (
+    PeriodicNotificationCreate,
+    PeriodicNotificationUpdate,
+)
 
 
 class PeriodicNotificationRepository(
-    BaseCRUDRepository[PeriodicNotification, Any, Any],
-    IPeriodicNotificationRepository[PeriodicNotification, Any, Any],
+    BaseCRUDRepository[PeriodicNotification, PeriodicNotificationCreate, PeriodicNotificationUpdate],
+    IPeriodicNotificationRepository[PeriodicNotification, PeriodicNotificationCreate, PeriodicNotificationUpdate],
 ):
     """Репозиторий для работы с периодическими уведомлениями."""
 

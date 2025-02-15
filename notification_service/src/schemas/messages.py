@@ -10,7 +10,7 @@ from enums.db import ChannelType, EventType
 
 class Message(BaseModel):
     event_type: EventType
-    notification_type: ChannelType = ChannelType.EMAIL
+    channel_type: ChannelType = ChannelType.EMAIL
     template_id: UUID
     context: dict
     subscribers: list[UUID]

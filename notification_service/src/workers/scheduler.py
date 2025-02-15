@@ -12,7 +12,7 @@ from enums.db import get_priority_for_event
 from enums.rabbitmq import get_queue_for_event
 from services.notification_state import NotificationStateService
 from services.subscriber_resolver import SubscriberResolver
-from workers.base_worker import BaseTask
+from workers.base_worker import BaseTask, shutdown, startup
 
 
 async def send_periodic_notifications(ctx: dict) -> None:
@@ -35,6 +35,7 @@ async def send_periodic_notifications(ctx: dict) -> None:
                     "subscribers": subscribers_batch,
                     "event_type": notification.event_type,
                     "channel_type": notification.channel_type,
+                    "notification_id": str(notification.id),
                 }
 
                 queue = get_queue_for_event(notification.event_type)
@@ -72,6 +73,7 @@ async def send_scheduled_notifications(ctx: dict) -> None:
                     "subscribers": subscribers_batch,
                     "event_type": notification.event_type,
                     "channel_type": notification.channel_type,
+                    "notification_id": str(notification.id),
                 }
 
                 queue = get_queue_for_event(notification.event_type)
@@ -113,4 +115,6 @@ scheduler_settings = {
     "max_jobs": settings.arq_max_jobs,
     "job_timeout": settings.arq_job_timeout,
     "keep_result": settings.arq_job_keep_result,
+    "on_startup": startup,
+    "on_shutdown": shutdown,
 }

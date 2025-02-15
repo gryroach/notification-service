@@ -33,19 +33,18 @@ class NotificationStateService:
 
     async def update_periodic_run_time(self, notification_id: UUID, last_run_time: datetime | None = None) -> None:
         """Обновляет время выполнения периодического уведомления."""
-        async with self.session.begin():
-            notification = await self.periodic_repo.get(notification_id)
-            if not notification:
-                return
+        notification = await self.periodic_repo.get(notification_id)
+        if not notification:
+            return
 
-            next_run_time = notification.calculate_next_run(last_run_time)
-            await self.periodic_repo.update(
-                db_obj=notification,
-                obj_in={
-                    "last_run_time": last_run_time or datetime.now(UTC),
-                    "next_run_time": next_run_time,
-                },
-            )
+        next_run_time = notification.calculate_next_run(last_run_time)
+        await self.periodic_repo.update(
+            db_obj=notification,
+            obj_in={
+                "last_run_time": last_run_time or datetime.now(UTC),
+                "next_run_time": next_run_time,
+            },
+        )
 
     async def get_user_periodic(self, user_id: UUID) -> list[PeriodicNotification]:
         """Получает список периодических уведомлений пользователя."""

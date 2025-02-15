@@ -8,6 +8,7 @@ from arq.worker import CronJob
 
 # project
 from core.config import settings
+from services.rabbitmq import RabbitMQService
 
 CRON_ARGS = 5
 
@@ -60,3 +61,13 @@ def create_cron_job(
         max_tries=3,
         **kwargs,
     )
+
+
+async def startup(ctx: dict) -> None:
+    rabbitmq_service = RabbitMQService()
+    await rabbitmq_service.init_queues()
+    ctx["rabbitmq"] = rabbitmq_service
+
+
+async def shutdown(ctx: dict) -> None:
+    pass
