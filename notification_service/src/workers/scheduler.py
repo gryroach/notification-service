@@ -11,7 +11,6 @@ from db.db import get_session
 from enums.db import get_priority_for_event
 from enums.rabbitmq import get_queue_for_event
 from services.notification_state import NotificationStateService
-from services.rabbitmq import RabbitMQService
 from services.subscriber_resolver import SubscriberResolver
 from workers.base_worker import BaseTask, shutdown, startup
 
@@ -79,8 +78,8 @@ async def send_scheduled_notifications(ctx: dict) -> None:
 
                 queue = get_queue_for_event(notification.event_type)
                 priority = get_priority_for_event(notification.event_type)
-                rabbitmq_service = RabbitMQService()
-                await rabbitmq_service.send_message(
+
+                await ctx["rabbitmq"].send_message(
                     queue_name=queue.queue_name,
                     message_body=orjson.dumps(message_body),
                     priority=priority,
