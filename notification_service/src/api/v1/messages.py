@@ -4,7 +4,6 @@ from typing import Annotated
 # thirdparty
 import orjson
 from fastapi import APIRouter, Depends, HTTPException
-from schemas.messages import Message, MessageResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 from starlette.requests import Request
@@ -14,6 +13,7 @@ from db.db import get_session
 from enums.db import get_priority_for_event
 from enums.rabbitmq import get_queue_for_event
 from repositories.sql.template import TemplateRepository
+from schemas.messages import Message, MessageResponse
 from services.rabbitmq import RabbitMQService
 
 router = APIRouter()

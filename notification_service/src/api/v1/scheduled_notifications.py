@@ -13,11 +13,14 @@ from db.db import get_session
 from repositories.sql.scheduled_notification import (
     ScheduledNotificationRepository,
 )
+from schemas.auth import JwtToken
 from schemas.scheduled_notifications import (
     ScheduledNotificationCreate,
+    ScheduledNotificationInput,
     ScheduledNotificationResponse,
     ScheduledNotificationUpdate,
 )
+from services.jwt_token import JWTBearer
 
 router = APIRouter()
 
@@ -28,12 +31,15 @@ router = APIRouter()
     status_code=status.HTTP_201_CREATED,
 )
 async def create_scheduled_notification(
-    notification: ScheduledNotificationCreate,
+    notification: ScheduledNotificationInput,
     db: Annotated[AsyncSession, Depends(get_session)],
+    token_payload: Annotated[JwtToken, Depends(JWTBearer())],
 ) -> ScheduledNotificationResponse:
     repo = ScheduledNotificationRepository(db)
     try:
-        db_notification = await repo.create(obj_in=notification)
+        db_notification = await repo.create(
+            obj_in=ScheduledNotificationCreate(**notification.model_dump(), staff_id=token_payload.user)
+        )
         return ScheduledNotificationResponse.model_validate(db_notification)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
@@ -42,6 +48,7 @@ async def create_scheduled_notification(
 @router.get(
     "/{notification_id}",
     response_model=ScheduledNotificationResponse,
+    dependencies=[Depends(JWTBearer())],
 )
 async def get_scheduled_notification(
     notification_id: UUID,
@@ -63,8 +70,9 @@ async def get_scheduled_notification(
 )
 async def update_scheduled_notification(
     notification_id: UUID,
-    notification: ScheduledNotificationUpdate,
+    notification: ScheduledNotificationInput,
     db: Annotated[AsyncSession, Depends(get_session)],
+    token_payload: Annotated[JwtToken, Depends(JWTBearer())],
 ) -> ScheduledNotificationResponse:
     repo = ScheduledNotificationRepository(db)
     db_notification = await repo.get(notification_id)
@@ -73,13 +81,17 @@ async def update_scheduled_notification(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Scheduled notification not found",
         )
-    db_notification = await repo.update(db_obj=db_notification, obj_in=notification)
+    db_notification = await repo.update(
+        db_obj=db_notification,
+        obj_in=ScheduledNotificationUpdate(**notification.model_dump(), staff_id=token_payload.user),
+    )
     return ScheduledNotificationResponse.model_validate(db_notification)
 
 
 @router.delete(
     "/{notification_id}",
     status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[Depends(JWTBearer())],
 )
 async def delete_scheduled_notification(
     notification_id: UUID,
@@ -97,6 +109,7 @@ async def delete_scheduled_notification(
 @router.get(
     "/",
     response_model=list[ScheduledNotificationResponse],
+    dependencies=[Depends(JWTBearer())],
 )
 async def get_all_scheduled_notifications(
     pagination_params: Annotated[PaginationParams, Depends()],

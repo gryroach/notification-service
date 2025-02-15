@@ -11,8 +11,7 @@ from pydantic import BaseModel, field_validator, model_validator
 from enums import NotificationType
 
 
-class PeriodicNotificationCreate(BaseModel):
-    staff_id: UUID
+class PeriodicNotificationInput(BaseModel):
     subscribers: str
     template_id: UUID
     notification_type: NotificationType
@@ -41,6 +40,10 @@ class PeriodicNotificationCreate(BaseModel):
         if self.stop_date and self.stop_date < datetime.now(UTC):
             self.is_active = False
         return self
+
+
+class PeriodicNotificationCreate(PeriodicNotificationInput):
+    staff_id: UUID
 
 
 class PeriodicNotificationUpdate(PeriodicNotificationCreate):

@@ -9,14 +9,17 @@ from pydantic import BaseModel
 from enums import NotificationType
 
 
-class ScheduledNotificationCreate(BaseModel):
-    staff_id: UUID
+class ScheduledNotificationInput(BaseModel):
     subscribers: str
     template_id: UUID
     notification_type: NotificationType
     scheduled_time: datetime
     is_sent: bool
     context: dict | None = None
+
+
+class ScheduledNotificationCreate(ScheduledNotificationInput):
+    staff_id: UUID
 
 
 class ScheduledNotificationUpdate(ScheduledNotificationCreate):

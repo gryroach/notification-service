@@ -10,6 +10,7 @@ class TemplateCreate(BaseModel):
     name: str
     subject: str
     body: str
+    staff_id: UUID
 
     @field_validator("body")
     @classmethod
@@ -22,10 +23,8 @@ class TemplateCreate(BaseModel):
         return v
 
 
-class TemplateUpdate(BaseModel):
-    name: str | None
-    subject: str | None
-    body: str | None
+class TemplateUpdate(TemplateCreate):
+    pass
 
 
 class TemplateResponse(BaseModel):
@@ -33,3 +32,7 @@ class TemplateResponse(BaseModel):
     name: str
     subject: str
     body: str
+    staff_id: UUID
+
+    class Config:
+        from_attributes = True

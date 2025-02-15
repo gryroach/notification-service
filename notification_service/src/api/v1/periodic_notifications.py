@@ -13,11 +13,14 @@ from db.db import get_session
 from repositories.sql.periodic_notification import (
     PeriodicNotificationRepository,
 )
+from schemas.auth import JwtToken
 from schemas.periodic_notifications import (
     PeriodicNotificationCreate,
+    PeriodicNotificationInput,
     PeriodicNotificationResponse,
     PeriodicNotificationUpdate,
 )
+from services.jwt_token import JWTBearer
 
 router = APIRouter()
 
@@ -28,17 +31,21 @@ router = APIRouter()
     status_code=status.HTTP_201_CREATED,
 )
 async def create_periodic_notification(
-    notification: PeriodicNotificationCreate,
+    notification: PeriodicNotificationInput,
     db: Annotated[AsyncSession, Depends(get_session)],
+    token_payload: Annotated[JwtToken, Depends(JWTBearer())],
 ) -> PeriodicNotificationResponse:
     repo = PeriodicNotificationRepository(db)
-    db_notification = await repo.create(obj_in=notification)
+    db_notification = await repo.create(
+        obj_in=PeriodicNotificationCreate(**notification.model_dump(), staff_id=token_payload.user)
+    )
     return PeriodicNotificationResponse.model_validate(db_notification)
 
 
 @router.get(
     "/{notification_id}",
     response_model=PeriodicNotificationResponse,
+    dependencies=[Depends(JWTBearer())],
 )
 async def get_periodic_notification(
     notification_id: UUID,
@@ -60,8 +67,9 @@ async def get_periodic_notification(
 )
 async def update_periodic_notification(
     notification_id: UUID,
-    notification: PeriodicNotificationUpdate,
+    notification: PeriodicNotificationInput,
     db: Annotated[AsyncSession, Depends(get_session)],
+    token_payload: Annotated[JwtToken, Depends(JWTBearer())],
 ) -> PeriodicNotificationResponse:
     repo = PeriodicNotificationRepository(db)
     db_notification = await repo.get(notification_id)
@@ -70,13 +78,17 @@ async def update_periodic_notification(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Periodic notification not found",
         )
-    db_notification = await repo.update(db_obj=db_notification, obj_in=notification)
+    db_notification = await repo.update(
+        db_obj=db_notification,
+        obj_in=PeriodicNotificationUpdate(**notification.model_dump(), staff_id=token_payload.user),
+    )
     return PeriodicNotificationResponse.model_validate(db_notification)
 
 
 @router.delete(
     "/{notification_id}",
     status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[Depends(JWTBearer())],
 )
 async def delete_periodic_notification(
     notification_id: UUID,
@@ -94,6 +106,7 @@ async def delete_periodic_notification(
 @router.get(
     "/",
     response_model=list[PeriodicNotificationResponse],
+    dependencies=[Depends(JWTBearer())],
 )
 async def get_all_periodic_notifications(
     pagination_params: Annotated[PaginationParams, Depends()],

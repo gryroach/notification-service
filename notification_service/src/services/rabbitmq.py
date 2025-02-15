@@ -1,11 +1,11 @@
 # thirdparty
 from aio_pika import ExchangeType, Message, connect_robust
 from aio_pika.abc import AbstractChannel, AbstractRobustConnection, HeadersType
-from schemas.messages import MessageResponse
 
 # project
 from core.config import settings
 from enums.rabbitmq import RabbitMQQueues
+from schemas.messages import MessageResponse
 from services.priorities import MAX_PRIORITY
 
 EXCHANGE_NAME = "notifications"
