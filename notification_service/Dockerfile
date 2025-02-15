@@ -19,7 +19,5 @@ RUN uv sync --frozen --no-cache --no-group dev
 COPY ./notification_service/alembic.ini .
 COPY ./notification_service/src .
 COPY ./notification_service/keys ./keys
-COPY ./notification_service/entrypoint.sh .
-
-# Run the application.
-ENTRYPOINT ["bash", "entrypoint.sh"]
+COPY ./notification_service/entrypoint-api.sh .
+COPY ./notification_service/entrypoint-worker.sh .

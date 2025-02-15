@@ -43,9 +43,10 @@ async def send_message(
         {
             "context": message.context,
             "subscribers": [str(m) for m in message.subscribers],
-            "template": str(template.id),
+            "template_id": str(template.id),
             "event_type": message.event_type,
-            "notification_type": message.notification_type,
+            "channel_type": message.channel_type,
+            "notification_id": None,
         },
     )
     queue = get_queue_for_event(message.event_type)

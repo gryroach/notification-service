@@ -9,7 +9,7 @@ from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 # project
-from enums.db import NotificationType
+from enums.db import ChannelType, EventType
 from models.base import Base
 
 
@@ -17,15 +17,17 @@ class PeriodicNotification(Base):
     """Модель периодического уведомления."""
 
     staff_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), nullable=False)
-    subscribers: Mapped[str] = mapped_column(String(100), nullable=False)
     template_id: Mapped[UUID] = mapped_column(ForeignKey("template.id"), nullable=False)
-    notification_type: Mapped[NotificationType] = mapped_column(nullable=False)
+    channel_type: Mapped[ChannelType] = mapped_column(nullable=False)
+    event_type: Mapped[EventType] = mapped_column(nullable=False)
     cron_schedule: Mapped[str] = mapped_column(String(100), nullable=False)
     last_run_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     next_run_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     is_active: Mapped[bool] = mapped_column(default=True)
     context: Mapped[dict] = mapped_column(JSON, nullable=True)
     stop_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    subscriber_query_type: Mapped[str] = mapped_column(String(50), nullable=False)
+    subscriber_query_params: Mapped[dict] = mapped_column(JSON, nullable=True)
 
     # Индексы для оптимизации запросов
     __table_args__ = (
@@ -37,7 +39,7 @@ class PeriodicNotification(Base):
             postgresql_where=is_active.is_(True),
         ),
         # Для поиска по пользователю
-        Index("ix_periodic_notifications_user", subscribers),
+        Index("ix_periodic_notifications_user", subscriber_query_type),
     )
 
     def calculate_next_run(self, from_time: datetime | None = None) -> datetime:

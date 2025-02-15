@@ -75,7 +75,6 @@ class NotificationStateService:
         self,
         notification_id: UUID,
         next_retry_time: datetime,
-        retry_count: int,
     ) -> None:
         """Обновляет данные о повторной отправке запланированного уведомления."""
         notification = await self.scheduled_repo.get(notification_id)
@@ -86,6 +85,5 @@ class NotificationStateService:
             db_obj=notification,
             obj_in={
                 "next_retry_time": next_retry_time,
-                "retry_count": retry_count,
             },
         )

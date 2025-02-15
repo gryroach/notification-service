@@ -6,13 +6,15 @@ from uuid import UUID
 from pydantic import BaseModel
 
 # project
-from enums import NotificationType
+from enums import ChannelType, EventType
 
 
 class ScheduledNotificationInput(BaseModel):
-    subscribers: str
+    subscriber_query_type: str
+    subscriber_query_params: dict | None
     template_id: UUID
-    notification_type: NotificationType
+    channel_type: ChannelType
+    event_type: EventType = EventType.CUSTOM
     scheduled_time: datetime
     is_sent: bool
     context: dict | None = None
@@ -29,9 +31,11 @@ class ScheduledNotificationUpdate(ScheduledNotificationCreate):
 class ScheduledNotificationResponse(BaseModel):
     id: UUID
     staff_id: UUID
-    subscribers: str
+    subscriber_query_type: str
+    subscriber_query_params: dict | None
     template_id: UUID
-    notification_type: NotificationType
+    channel_type: ChannelType
+    event_type: EventType
     scheduled_time: datetime
     is_sent: bool
     context: dict | None = None
