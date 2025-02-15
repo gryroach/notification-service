@@ -10,6 +10,7 @@ dependencies = [
     "asyncpg>=0.30.0",
     "croniter>=6.0.0",
     "fastapi[standard]>=0.115.8",
+    "jinja2>=3.1.5",
     "orjson>=3.10.15",
     "psycopg>=3.1.18",
     "pydantic-settings>=2.7.1",
@@ -54,6 +55,7 @@ ignore = [
     "RUF002", # Игнорируем проверку кириллицы в докстрингах
     "RUF003", # Игнорируем проверку кириллицы в комментариях
     "I001",   # Игнорируем проверку сортировки импортов, так как используем isort
+    "B904",   # Игнорируем проверку наличия from при raise в обработчиках исключений
 ]
 mccabe = { max-complexity = 10 }
 pydocstyle = { convention = "google" }
@@ -81,15 +83,15 @@ known_first_party = [
     "api",
     "core",
     "db",
-    "documents",
-    "exceptions",
-    "middlewares",
-    "services",
-    "main",
-    "handlers",
-    "models",
     "enums",
+    "exceptions",
+    "handlers",
+    "main",
+    "middlewares",
+    "models",
     "repositories",
+    "schemas",
+    "services"
 ]
 known_third_party = ["sqlalchemy", "pydantic", "asyncpg", "croniter", "alembic"]
 import_heading_stdlib = "stdlib"
