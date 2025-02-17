@@ -1,6 +1,7 @@
 # thirdparty
 from aio_pika import ExchangeType, Message, connect_robust
 from aio_pika.abc import AbstractChannel, AbstractRobustConnection, HeadersType
+from aiormq import AMQPConnectionError
 
 # project
 from core.config import settings
@@ -25,7 +26,7 @@ class RabbitMQService:
         await self.connect()
         assert self.channel is not None, "RabbitMQ channel is not initialized"
 
-        for queue_conf in RabbitMQQueues.list():
+        for queue_conf in RabbitMQQueues.list_queues():
             queue = await self.channel.declare_queue(
                 queue_conf.queue_name,
                 durable=True,
@@ -38,7 +39,10 @@ class RabbitMQService:
 
     @staticmethod
     async def get_connection() -> AbstractRobustConnection:
-        connection = await connect_robust(settings.rabbitmq_url)
+        try:
+            connection = await connect_robust(settings.rabbitmq_url)
+        except AMQPConnectionError as err:
+            raise ValueError("RabbitMQ connection error") from err
         return connection
 
     async def close(self) -> None:

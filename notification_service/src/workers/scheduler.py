@@ -9,7 +9,7 @@ from arq.connections import RedisSettings
 from core.config import settings
 from db.db import get_session
 from enums.db import get_priority_for_event
-from enums.rabbitmq import get_queue_for_event
+from enums.rabbitmq import MessageType, get_queue_for_event
 from services.notification_state import NotificationStateService
 from services.subscriber_resolver import SubscriberResolver
 from workers.base_worker import BaseTask, shutdown, startup
@@ -36,6 +36,7 @@ async def send_periodic_notifications(ctx: dict) -> None:
                     "event_type": notification.event_type,
                     "channel_type": notification.channel_type,
                     "notification_id": str(notification.id),
+                    "message_type": MessageType.PERIODIC,
                 }
 
                 queue = get_queue_for_event(notification.event_type)
@@ -74,6 +75,7 @@ async def send_scheduled_notifications(ctx: dict) -> None:
                     "event_type": notification.event_type,
                     "channel_type": notification.channel_type,
                     "notification_id": str(notification.id),
+                    "message_type": MessageType.SCHEDULED,
                 }
 
                 queue = get_queue_for_event(notification.event_type)
@@ -84,8 +86,6 @@ async def send_scheduled_notifications(ctx: dict) -> None:
                     message_body=orjson.dumps(message_body),
                     priority=priority,
                 )
-
-            await state_service.mark_scheduled_sent(notification.id)
 
 
 tasks = [

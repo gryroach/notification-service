@@ -3,8 +3,27 @@ import random
 from datetime import date
 from uuid import uuid4
 
+# project
+from core.config import settings
+from schemas.auth_service import UserData
 
-class AuthMockService:
+
+class AuthServiceBase:
+    async def get_users(
+        self,
+        birth_month: int | None = None,
+        birth_day: int | None = None,
+        page: int = 1,
+        page_size: int = 100,
+    ) -> list[dict]:
+        raise NotImplementedError
+
+    @staticmethod
+    async def get_user_data(user_id: str) -> UserData:
+        raise NotImplementedError
+
+
+class AuthMockService(AuthServiceBase):
     """Заглушка сервиса аутентификации для тестирования"""
 
     def __init__(self) -> None:
@@ -50,5 +69,28 @@ class AuthMockService:
         end = start + page_size
         return filtered[start:end]
 
+    @staticmethod
+    async def get_user_data(user_id: str) -> UserData:
+        return UserData(
+            id=user_id,
+            birth_date=date(
+                random.randint(1900, 2022),
+                random.randint(1, 12),
+                random.randint(1, 28),
+            ),
+            email=f"{user_id}@{random.choice(['gmail.com', 'mail.ru', 'yandex.ru'])}",
+            first_name=random.choice(["John", "Oliver", "Emma", "Noah", "Liam"]),
+            last_name=random.choice(["Doe", "Smith", "Johnson", "Williams", "Jones"]),
+            phone=(
+                f"+7 ({random.randint(100, 999)}) "
+                f"{random.randint(100, 999)}-{random.randint(10, 99)}-{random.randint(10, 99)}"
+            ),
+            avatar=f"https://example.com/{random.randint(1, 1000)}.jpg",
+        )
 
-auth_service = AuthMockService()
+
+auth_service: AuthServiceBase
+if settings.mock_auth_service:
+    auth_service = AuthMockService()
+else:
+    auth_service = AuthServiceBase()

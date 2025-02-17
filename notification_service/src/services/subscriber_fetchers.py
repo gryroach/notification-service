@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Any
 
 # project
-from services.auth_mock import auth_service
+from services.auth_service import auth_service
 from services.subscriber_resolver import SubscriberResolver
 
 

@@ -1,6 +1,6 @@
 # stdlib
 from dataclasses import dataclass
-from enum import Enum
+from enum import Enum, StrEnum
 
 # project
 from enums.db import EventType
@@ -18,8 +18,20 @@ class RabbitMQQueues(Enum):
     LOW = QueueConfig("notifications.low", ttl=3600 * 3 * 1000)  # 3 hours
 
     @classmethod
-    def list(cls) -> list[QueueConfig]:
+    def list_queues(cls) -> list[QueueConfig]:
         return [c.value for c in cls]
+
+    @classmethod
+    def list_names(cls) -> list[str]:
+        return [c.value.queue_name for c in cls]
+
+
+class MessageType(StrEnum):
+    """Типы сообщений в очереди."""
+
+    SCHEDULED = "scheduled"
+    PERIODIC = "periodic"
+    IMMEDIATE = "immediate"
 
 
 EVENT_TO_QUEUE_MAPPING = {
