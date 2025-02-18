@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 # project
 from enums.db import ChannelType, EventType
+from enums.rabbitmq import MessageType
 
 
 class Message(BaseModel):
@@ -22,3 +23,13 @@ class MessageResponse(BaseModel):
     queue: str
     priority: int
     x_request_id: str | None
+
+
+class RabbitMQMessage(BaseModel):
+    template_id: str
+    context: dict
+    subscribers: list[str]
+    event_type: EventType
+    channel_type: ChannelType
+    notification_id: str | None
+    message_type: MessageType

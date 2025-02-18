@@ -78,3 +78,9 @@ class PeriodicNotificationRepository(
         query = select(self.model).where(self.model.is_active.is_(True))
         result = await self.session.execute(query)
         return list(result.scalars().all())
+
+    async def notification_is_active(self, notification_id: UUID) -> bool:
+        """Проверяет активность периодического уведомления по его ID."""
+        query = select(self.model).where(self.model.id == notification_id, self.model.is_active.is_(True))
+        result = await self.session.execute(query)
+        return result.scalar() is not None

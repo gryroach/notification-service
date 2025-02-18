@@ -18,6 +18,7 @@ load_dotenv(DOTENV_PATH)
 class AppSettings(BaseSettings):
     project_name: str = Field(default="Notification API")
     api_production: bool = Field(default=True)
+    default_notification_subject: str = Field(default="Movie Notification")
 
     # Настройки Postgres
     postgres_user: str = Field(default="postgres")
@@ -31,6 +32,10 @@ class AppSettings(BaseSettings):
     redis_host: str = Field(default="redis")
     redis_port: int = Field(default=6379)
     redis_db: int = Field(default=1)
+    redis_message_ttl: int = Field(
+        default=120,
+        description="Время хранения успешно отправленных уведомлений в секундах",
+    )
 
     # Sentry
     sentry_dsn: str = Field(default="")
@@ -61,8 +66,16 @@ class AppSettings(BaseSettings):
         description="Размер пакета для обработки запланированных уведомлений",
     )
 
+    # Настройки отправки email
+    smtp_server: str = Field(default="mailhog")
+    smtp_port: int = Field(default=1025)
+    smtp_user: str = Field(default="test")
+    smtp_password: str = Field(default="password")
+    email_from: str = Field(default="movies_nofitication@example.com")
+
     # Другие настройки
     test_mode: bool = Field(default=False)
+    mock_auth_service: bool = Field(default=True)
 
     model_config = SettingsConfigDict(
         env_file=DOTENV_PATH,

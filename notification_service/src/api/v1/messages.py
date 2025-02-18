@@ -2,7 +2,6 @@
 from typing import Annotated
 
 # thirdparty
-import orjson
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
@@ -11,9 +10,9 @@ from starlette.requests import Request
 # project
 from db.db import get_session
 from enums.db import get_priority_for_event
-from enums.rabbitmq import get_queue_for_event
+from enums.rabbitmq import MessageType, get_queue_for_event
 from repositories.sql.template import TemplateRepository
-from schemas.messages import Message, MessageResponse
+from schemas.messages import Message, MessageResponse, RabbitMQMessage
 from services.rabbitmq import RabbitMQService
 
 router = APIRouter()
@@ -39,22 +38,21 @@ async def send_message(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Template not found",
         )
-    message_body = orjson.dumps(
-        {
-            "context": message.context,
-            "subscribers": [str(m) for m in message.subscribers],
-            "template_id": str(template.id),
-            "event_type": message.event_type,
-            "channel_type": message.channel_type,
-            "notification_id": None,
-        },
+    message_body = RabbitMQMessage(
+        context=message.context,
+        subscribers=[str(m) for m in message.subscribers],
+        template_id=str(template.id),
+        event_type=message.event_type,
+        channel_type=message.channel_type,
+        notification_id=None,
+        message_type=MessageType.IMMEDIATE,
     )
     queue = get_queue_for_event(message.event_type)
     priority = get_priority_for_event(message.event_type)
 
     result = await rabbitmq_service.send_message(
         queue_name=queue.queue_name,
-        message_body=message_body,
+        message_body=message_body.model_dump_json(),
         priority=priority,
         x_request_id=request.headers.get("X-Request-Id"),
     )
