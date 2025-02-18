@@ -6,8 +6,7 @@ from uuid import UUID
 from pydantic import BaseModel
 
 # project
-from enums import ChannelType, EventType
-from enums.subscriber_enum import SubscriberQueryEnum
+from enums import ChannelType, EventType, SubscriberQueryEnum
 
 
 class ScheduledNotificationInput(BaseModel):

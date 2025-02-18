@@ -22,6 +22,4 @@ class SubscriberQueryEnum(Enum):
     def validate(cls, value: str) -> None:
         """Валидация значения на основе существующих значений Enum."""
         if value not in cls._member_map_:
-            raise ValueError(
-                f"Invalid query type: {value}. Allowed values: {list(cls._member_map_.keys())}"
-            )
+            raise ValueError(f"Invalid query type: {value}. Allowed values: {list(cls._member_map_.keys())}")

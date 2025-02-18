@@ -21,8 +21,11 @@ run-former-low:
 	docker compose up -d --build worker-former-low
 
 # Запуск инструмента для тестирования отправки электронной почты
-run-former-high:
+run-test-sender:
 	docker compose up -d --build mailhog
+
+run-repeater:
+    docker compose up -d --build worker-repeater
 
 # Остановка и удаление всех контейнеров
 down:

@@ -8,8 +8,7 @@ from croniter import CroniterBadCronError, croniter
 from pydantic import BaseModel, field_validator, model_validator
 
 # project
-from enums import ChannelType, EventType
-from enums.subscriber_enum import SubscriberQueryEnum
+from enums import ChannelType, EventType, SubscriberQueryEnum
 
 
 class PeriodicNotificationInput(BaseModel):
