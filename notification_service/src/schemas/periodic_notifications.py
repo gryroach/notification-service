@@ -9,10 +9,11 @@ from pydantic import BaseModel, field_validator, model_validator
 
 # project
 from enums import ChannelType, EventType
+from enums.subscriber_enum import SubscriberQueryEnum
 
 
 class PeriodicNotificationInput(BaseModel):
-    subscriber_query_type: str
+    subscriber_query_type: SubscriberQueryEnum
     subscriber_query_params: dict | None
     template_id: UUID
     channel_type: ChannelType
