@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Message Sender</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        input, select, button {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #messages {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        #messages li {
+            background: #f1f1f1;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            word-wrap: break-word;
+        }
+        .error {
+            color: red;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Message Sender</h1>
+        <form id="messageForm">
+            <select id="eventType" required>
+                <option value="user_registration">USER_REGISTRATION</option>
+                <option value="new_movie">NEW_MOVIE</option>
+                <option value="custom">CUSTOM</option>
+            </select>
+            <select id="channelType" required>
+                <option value="email">Email</option>
+                <option value="sms">SMS</option>
+                <option value="push">PUSH</option>
+            </select>
+            <input type="text" id="templateId" placeholder="Template ID" required>
+            <textarea id="context" placeholder="Context (JSON)" required></textarea>
+            <input type="text" id="subscribers" placeholder="UUID пользователей, разделенные запятой" required>
+            <div id="error" class="error"></div>
+            <button type="submit">Send Message</button>
+        </form>
+        <ul id="messages"></ul>
+    </div>
+
+    <script>
+        let ws; // WebSocket соединение
+
+        function initWebSocket() {
+            ws = new WebSocket("ws://" + location.host + "/api-notify/v1/sockets/ws/send-message");
+
+            ws.onopen = function() {
+                console.log('WebSocket соединение установлено.');
+            };
+
+            ws.onmessage = function(event) {
+                const response = JSON.parse(event.data);
+                const errorElement = document.getElementById('error');
+                if (["auth_error", "validation_error"].includes(response.status)) {
+                    errorElement.textContent = response.detail;
+                    return;
+                }
+                const messages = document.getElementById('messages');
+                const message = document.createElement('li');
+                const content = document.createTextNode(event.data);
+                message.appendChild(content);
+                messages.appendChild(message);
+            };
+
+            ws.onclose = function() {
+                console.log('WebSocket соединение закрыто.');
+                const errorElement = document.getElementById('error');
+                if (errorElement) {
+                    errorElement.textContent = 'Соединение закрыто. Пожалуйста, обновите страницу.';
+                }
+            };
+
+            ws.onerror = function(error) {
+                console.error('WebSocket ошибка:', error);
+                const errorElement = document.getElementById('error');
+                if (errorElement) {
+                    errorElement.textContent = 'Произошла ошибка WebSocket. Пожалуйста, обновите страницу.';
+                }
+            };
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initWebSocket();
+
+            const form = document.getElementById('messageForm');
+            form.addEventListener('submit', sendMessage);
+
+            function sendMessage(event) {
+                event.preventDefault();
+
+                const errorElement = document.getElementById('error');
+                if (!errorElement) {
+                    console.error('Элемент для отображения ошибок не найден!');
+                    return;
+                }
+
+                errorElement.textContent = '';
+
+                try {
+                    const message = {
+                        event_type: document.getElementById('eventType').value,
+                        channel_type: document.getElementById('channelType').value,
+                        template_id: document.getElementById('templateId').value,
+                        context: JSON.parse(document.getElementById('context').value),
+                        subscribers: document.getElementById('subscribers').value.split(',').map(s => s.trim()),
+                    };
+
+                    ws.send(JSON.stringify(message));
+                } catch (error) {
+                    errorElement.textContent = 'Ошибка: Некорректный JSON в поле Context.';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
