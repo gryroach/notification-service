@@ -139,6 +139,20 @@ services:
       - "1025:1025"
       - "8025:8025"
 
+  api-test:
+    build:
+      context: .
+      dockerfile: ./notification_service/Dockerfile.test
+    container_name: notification_api_test
+    image: notification-api-image
+    env_file:
+      - ./.env
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+
 volumes:
   notification_data:
   rabbitmq_data:

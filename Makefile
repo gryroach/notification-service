@@ -21,9 +21,24 @@ run-former-low:
 	docker compose up -d --build worker-former-low
 
 # Запуск инструмента для тестирования отправки электронной почты
-run-former-high:
+run-mailhog:
 	docker compose up -d --build mailhog
+
+# Запуск тестов
+run-tests:
+	docker compose -f docker-compose.test.yml build api-test
+	docker compose -f docker-compose.test.yml up -d db redis rabbitmq api nginx --build --force-recreate
+	@echo "Ожидание поднятия тестовой API..."
+	@while ! curl -s http://localhost/api-notify/openapi > /dev/null; do sleep 1; done
+	sleep 10
+	@echo "Тестовый API успешно поднят!"
+	docker compose -f docker-compose.test.yml run -T --rm api-test
+	docker compose down -v
 
 # Остановка и удаление всех контейнеров
 down:
 	docker compose down
+
+# Остановка и удаление тестовых контейнеров
+down-tests:
+	docker compose -f docker-compose.test.yml down
