@@ -25,7 +25,7 @@ run-test-sender:
 	docker compose up -d --build mailhog
 
 run-repeater:
-    docker compose up -d --build worker-repeater
+	docker compose up -d --build worker-repeater
 
 # Остановка и удаление всех контейнеров
 down:

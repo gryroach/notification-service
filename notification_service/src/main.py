@@ -4,14 +4,21 @@ from contextlib import asynccontextmanager
 
 # thirdparty
 import sentry_sdk
+from admin import (
+    PeriodicNotificationAdmin,
+    ScheduledNotificationAdmin,
+    TemplateAdmin,
+)
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from redis.asyncio import Redis
+from sqladmin import Admin
 
 # project
 from api.v1 import api_router as api_v1_router
 from core.config import settings
 from db import redis
+from db.db import engine
 from handlers import exception_handlers
 from middlewares.request_id import request_id_require
 from services.rabbitmq import RabbitMQService
@@ -46,6 +53,11 @@ app = FastAPI(
     lifespan=lifespan,
     exception_handlers=exception_handlers,
 )
+
+admin = Admin(app, engine)
+admin.add_view(TemplateAdmin)
+admin.add_view(ScheduledNotificationAdmin)
+admin.add_view(PeriodicNotificationAdmin)
 
 app.middleware("http")(request_id_require)
 
