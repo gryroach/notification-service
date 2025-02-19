@@ -13,6 +13,9 @@ from core.logger import LOGGING
 logging_config.dictConfig(LOGGING)
 DOTENV_PATH = find_dotenv(".env")
 load_dotenv(DOTENV_PATH)
+# Корень проекта
+BASE_DIR = Path(__file__).resolve().parent.parent
+STATIC_DIR = BASE_DIR / "static"
 
 
 class AppSettings(BaseSettings):
