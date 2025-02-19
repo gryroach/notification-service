@@ -19,6 +19,12 @@ run-former-medium:
 
 run-former-low:
 	docker compose up -d --build worker-former-low
+ 
+run-test-sender:
+	docker compose up -d --build mailhog
+
+run-repeater:
+    docker compose up -d --build worker-repeater
 
 # Запуск инструмента для тестирования отправки электронной почты
 run-mailhog:
@@ -34,6 +40,12 @@ run-tests:
 	@echo "Тестовый API успешно поднят!"
 	docker compose -f docker-compose.test.yml run -T --rm api-test
 	docker compose down -v
+
+run-test-sender:
+	docker compose up -d --build mailhog
+
+run-repeater:
+    docker compose up -d --build worker-repeater
 
 # Остановка и удаление всех контейнеров
 down:

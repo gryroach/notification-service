@@ -29,6 +29,8 @@ services:
       - ./configs/nginx/sites:/etc/nginx/conf.d:ro
     ports:
       - "80:80"
+    depends_on:
+      - api
 
   db:
     image: postgres:16
@@ -82,26 +84,7 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
-  worker-scheduler:
-    build:
-      context: .
-      dockerfile: ./notification_service/Dockerfile
-    container_name: notification_worker_scheduler
-    image: notification-api-image
-    env_file:
-      - ./.env
-    command: bash entrypoint-worker.sh scheduler
-    volumes:
-      - ./notification_service/src:/app/src
-    depends_on:
-      redis:
-        condition: service_healthy
-      db:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-
-  worker-former-defaults: &worker-former-defaults
+  worker-defaults: &worker-defaults
     build:
       context: .
       dockerfile: ./notification_service/Dockerfile
@@ -119,19 +102,29 @@ services:
         condition: service_healthy
 
   worker-former-low:
-    <<: *worker-former-defaults
+    <<: *worker-defaults
     container_name: notification_worker_former_low
     command: uv run workers/former/former_worker.py notifications.low
 
   worker-former-medium:
-    <<: *worker-former-defaults
+    <<: *worker-defaults
     container_name: notification_worker_former_medium
     command: uv run workers/former/former_worker.py notifications.medium
 
   worker-former-high:
-    <<: *worker-former-defaults
+    <<: *worker-defaults
     container_name: notification_worker_former_high
     command: uv run workers/former/former_worker.py notifications.high
+
+  worker-repeater:
+    <<: *worker-defaults
+    container_name: notification_worker_repeater
+    command: bash entrypoint-worker.sh repeater
+  
+  worker-scheduler:
+    <<: *worker-defaults
+    container_name: notification_worker_scheduler
+    command: bash entrypoint-worker.sh scheduler
 
   mailhog:
     image: mailhog/mailhog
