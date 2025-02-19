@@ -61,12 +61,17 @@ class AppSettings(BaseSettings):
 
     # Настройки расписания для воркеров
     periodic_schedule: str = Field(default="* * * * *")  # Каждую минуту
-    scheduled_schedule: str = Field(default="* * * * *")  # Каждую минуту
+    scheduled_schedule: str = Field(default="* * * * *")
+    repeater_schedule: str = Field(default="* * * * *")
 
     # Настройки для пакетной обработки
     scheduled_batch_size: int = Field(
         default=100,
         description="Размер пакета для обработки запланированных уведомлений",
+    )
+    repeater_batch_size: int = Field(
+        default=100,
+        description="Размер пакета для повторной обработки сломанных уведомлений",
     )
 
     # Настройки отправки email
