@@ -25,15 +25,15 @@ run-mailhog:
 	docker compose up -d --build mailhog
 
 # Запуск тестов
-run-tests:
+up-tests:
 	docker compose -f docker-compose.test.yml build api-test
 	docker compose -f docker-compose.test.yml up -d db redis rabbitmq api nginx --build --force-recreate
 	@echo "Ожидание поднятия тестовой API..."
 	@while ! curl -s http://localhost/api-notify/openapi > /dev/null; do sleep 1; done
-	sleep 10
 	@echo "Тестовый API успешно поднят!"
+
+run-tests:
 	docker compose -f docker-compose.test.yml run -T --rm api-test
-	docker compose down -v
 
 # Остановка и удаление всех контейнеров
 down:
