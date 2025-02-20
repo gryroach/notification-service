@@ -35,7 +35,7 @@ jobs:
 
       - name: Run ruff format
         run: |
-          ruff format --check --exclude notification_service/src/db/migrations/ --exclude tests/ .
+          ruff format --check --exclude notification_service/src/db/migrations/ --exclude notification_service/src/tests/ .
 
       - name: Run ruff lint
         run: |

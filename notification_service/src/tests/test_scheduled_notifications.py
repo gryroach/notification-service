@@ -1,5 +1,4 @@
 # stdlib
-import tempfile
 from datetime import datetime, timezone
 
 # thirdparty

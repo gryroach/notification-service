@@ -28,7 +28,7 @@ repos:
         language: python
         types: [python]
         args: [format]
-        exclude: notification_service/src/db/migrations/|tests/
+        exclude: notification_service/src/db/migrations/
         require_serial: false
         additional_dependencies: []
 
@@ -38,7 +38,7 @@ repos:
         language: python
         types: [python]
         args: [check]
-        exclude: notification_service/src/db/migrations/|tests/
+        exclude: notification_service/src/db/migrations/
         require_serial: false
         additional_dependencies: []
 

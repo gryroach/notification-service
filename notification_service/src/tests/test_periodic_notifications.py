@@ -1,6 +1,3 @@
-# stdlib
-import tempfile
-
 # thirdparty
 import pytest
 from httpx import AsyncClient
