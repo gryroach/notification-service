@@ -5,7 +5,7 @@ from sqladmin import ModelView
 from models import PeriodicNotification, ScheduledNotification, Template
 
 
-class TemplateAdmin(ModelView, model=Template):
+class TemplateAdmin(ModelView, model=Template):  # type: ignore
     column_list = (
         Template.id,
         Template.name,
@@ -14,7 +14,7 @@ class TemplateAdmin(ModelView, model=Template):
     )
 
 
-class ScheduledNotificationAdmin(ModelView, model=ScheduledNotification):
+class ScheduledNotificationAdmin(ModelView, model=ScheduledNotification):  # type: ignore
     column_list = (
         ScheduledNotification.id,
         ScheduledNotification.event_type,
@@ -23,7 +23,7 @@ class ScheduledNotificationAdmin(ModelView, model=ScheduledNotification):
     )
 
 
-class PeriodicNotificationAdmin(ModelView, model=PeriodicNotification):
+class PeriodicNotificationAdmin(ModelView, model=PeriodicNotification):  # type: ignore
     column_list = (
         PeriodicNotification.id,
         PeriodicNotification.event_type,
