@@ -1,4 +1,5 @@
 # stdlib
+from enum import StrEnum
 from logging import config as logging_config
 from pathlib import Path
 
@@ -16,6 +17,13 @@ load_dotenv(DOTENV_PATH)
 # Корень проекта
 BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_DIR = BASE_DIR / "static"
+
+
+class ShortenerService(StrEnum):
+    TINYURL = "tinyurl"
+    CLCKRU = "clckru"
+    POST = "post"
+    TINYCC = "tinycc"
 
 
 class AppSettings(BaseSettings):
@@ -80,6 +88,13 @@ class AppSettings(BaseSettings):
     smtp_user: str = Field(default="test")
     smtp_password: str = Field(default="password")
     email_from: str = Field(default="movies_nofitication@example.com")
+
+    # Сервис сокращения ссылок
+    shortener_service: ShortenerService = Field(
+        default=ShortenerService.TINYURL, description="Сервис для сокращения ссылок"
+    )
+    shortener_api_key: str = Field(default="", description="Ключ для сервиса сокращения ссылок")
+    shortener_login: str = Field(default="", description="Логин для сервиса сокращения ссылок")
 
     # Другие настройки
     test_mode: bool = Field(default=False)

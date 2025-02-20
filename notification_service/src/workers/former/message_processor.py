@@ -21,6 +21,7 @@ from schemas.auth_service import UserData
 from schemas.messages import RabbitMQMessage
 from schemas.templates import TemplateResponse
 from services.auth_service import auth_service
+from services.url_shorter import URLShortener
 
 logger = logging.getLogger(__name__)
 
@@ -94,6 +95,11 @@ class MessageProcessorService:
     async def fill_template(self, subscriber_data: dict) -> str:
         if self.template is None:
             return ""
+
+        url = subscriber_data.get("url")
+        if url is not None:
+            subscriber_data["url"] = URLShortener().shorten_url(url)
+
         env = Environment()
         template = env.from_string(self.template.body)
         return template.render(subscriber_data)
