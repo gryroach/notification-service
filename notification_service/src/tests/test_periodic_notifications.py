@@ -7,7 +7,9 @@ from httpx import AsyncClient
 
 
 @pytest.mark.asyncio
-async def test_create_and_get_periodic_notification(test_client: AsyncClient, create_template, headers):
+async def test_create_and_get_periodic_notification(
+    test_client: AsyncClient, create_template, headers
+):
     test_template_data = {
         "name": "Test Template",
         "subject": "Test Subject",
@@ -18,7 +20,7 @@ async def test_create_and_get_periodic_notification(test_client: AsyncClient, cr
 
     periodic_data = {
         "staff_id": "550e8400-e29b-41d4-a716-446655440000",
-        "subscriber_query_type": "all",
+        "subscriber_query_type": "birthday_today",
         "subscriber_query_params": None,
         "template_id": template["id"],
         "channel_type": "email",
@@ -43,7 +45,9 @@ async def test_create_and_get_periodic_notification(test_client: AsyncClient, cr
 
 
 @pytest.mark.asyncio
-async def test_update_periodic_notification(test_client: AsyncClient, create_template, headers):
+async def test_update_periodic_notification(
+    test_client: AsyncClient, create_template, headers
+):
     test_template_data = {
         "name": "Test Template",
         "subject": "Test Subject",
@@ -54,7 +58,7 @@ async def test_update_periodic_notification(test_client: AsyncClient, create_tem
 
     periodic_data = {
         "staff_id": "550e8400-e29b-41d4-a716-446655440000",
-        "subscriber_query_type": "all",
+        "subscriber_query_type": "birthday_today",
         "subscriber_query_params": None,
         "template_id": template["id"],
         "channel_type": "email",
@@ -71,7 +75,7 @@ async def test_update_periodic_notification(test_client: AsyncClient, create_tem
     notification_id = create_response.json()["id"]
 
     update_data = {
-        "subscriber_query_type": "all",
+        "subscriber_query_type": "birthday_today",
         "subscriber_query_params": None,
         "template_id": template["id"],
         "channel_type": "sms",
@@ -92,7 +96,9 @@ async def test_update_periodic_notification(test_client: AsyncClient, create_tem
 
 
 @pytest.mark.asyncio
-async def test_delete_periodic_notification(test_client: AsyncClient, create_template, headers):
+async def test_delete_periodic_notification(
+    test_client: AsyncClient, create_template, headers
+):
     test_template_data = {
         "name": "Test Template",
         "subject": "Test Subject",
@@ -103,7 +109,7 @@ async def test_delete_periodic_notification(test_client: AsyncClient, create_tem
 
     periodic_data = {
         "staff_id": "550e8400-e29b-41d4-a716-446655440000",
-        "subscriber_query_type": "all",
+        "subscriber_query_type": "birthday_today",
         "subscriber_query_params": None,
         "template_id": template["id"],
         "channel_type": "email",
@@ -133,10 +139,12 @@ async def test_delete_periodic_notification(test_client: AsyncClient, create_tem
 
 
 @pytest.mark.asyncio
-async def test_create_periodic_notification_with_invalid_template(test_client: AsyncClient, headers):
+async def test_create_periodic_notification_with_invalid_template(
+    test_client: AsyncClient, headers
+):
     periodic_data = {
         "staff_id": "550e8400-e29b-41d4-a716-446655440000",
-        "subscriber_query_type": "all",
+        "subscriber_query_type": "birthday_today",
         "subscriber_query_params": None,
         "template_id": "550e8400-e29b-41d4-a716-446655440000",
         "channel_type": "email",
@@ -156,7 +164,9 @@ async def test_create_periodic_notification_with_invalid_template(test_client: A
 
 
 @pytest.mark.asyncio
-async def test_create_periodic_notification_with_invalid_cron(test_client: AsyncClient, create_template, headers):
+async def test_create_periodic_notification_with_invalid_cron(
+    test_client: AsyncClient, create_template, headers
+):
     test_template_data = {
         "name": "Test Template",
         "subject": "Test Subject",
@@ -167,7 +177,7 @@ async def test_create_periodic_notification_with_invalid_cron(test_client: Async
 
     periodic_data = {
         "staff_id": "550e8400-e29b-41d4-a716-446655440000",
-        "subscriber_query_type": "all",
+        "subscriber_query_type": "birthday_today",
         "subscriber_query_params": None,
         "template_id": template["id"],
         "channel_type": "email",

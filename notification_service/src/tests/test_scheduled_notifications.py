@@ -8,7 +8,9 @@ from httpx import AsyncClient
 
 
 @pytest.mark.asyncio
-async def test_create_and_get_scheduled_notification(test_client: AsyncClient, create_template, headers):
+async def test_create_and_get_scheduled_notification(
+    test_client: AsyncClient, create_template, headers
+):
     test_template_data = {
         "name": "Test Template",
         "subject": "Test Subject",
@@ -19,7 +21,7 @@ async def test_create_and_get_scheduled_notification(test_client: AsyncClient, c
     template_id = template["id"]
 
     scheduled_data = {
-        "subscriber_query_type": "all",
+        "subscriber_query_type": "birthday_today",
         "subscriber_query_params": None,
         "template_id": template_id,
         "channel_type": "email",
@@ -50,7 +52,9 @@ async def test_create_and_get_scheduled_notification(test_client: AsyncClient, c
 
 
 @pytest.mark.asyncio
-async def test_update_scheduled_notification(test_client: AsyncClient, create_template, headers):
+async def test_update_scheduled_notification(
+    test_client: AsyncClient, create_template, headers
+):
     test_template_data = {
         "name": "Test Template",
         "subject": "Test Subject",
@@ -61,7 +65,7 @@ async def test_update_scheduled_notification(test_client: AsyncClient, create_te
     template_id = template["id"]
 
     scheduled_data = {
-        "subscriber_query_type": "all",
+        "subscriber_query_type": "birthday_today",
         "subscriber_query_params": None,
         "template_id": template_id,
         "channel_type": "email",
@@ -80,7 +84,7 @@ async def test_update_scheduled_notification(test_client: AsyncClient, create_te
     scheduled_notification = scheduled_response.json()
 
     update_data = {
-        "subscriber_query_type": "all",
+        "subscriber_query_type": "birthday_today",
         "subscriber_query_params": None,
         "template_id": template_id,
         "channel_type": "sms",
@@ -102,7 +106,9 @@ async def test_update_scheduled_notification(test_client: AsyncClient, create_te
 
 
 @pytest.mark.asyncio
-async def test_delete_scheduled_notification(test_client: AsyncClient, create_template, headers):
+async def test_delete_scheduled_notification(
+    test_client: AsyncClient, create_template, headers
+):
     test_template_data = {
         "name": "Test Template",
         "subject": "Test Subject",
@@ -113,7 +119,7 @@ async def test_delete_scheduled_notification(test_client: AsyncClient, create_te
     template_id = template["id"]
 
     scheduled_data = {
-        "subscriber_query_type": "all",
+        "subscriber_query_type": "birthday_today",
         "subscriber_query_params": None,
         "template_id": template_id,
         "channel_type": "email",
