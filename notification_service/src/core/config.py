@@ -13,6 +13,9 @@ from core.logger import LOGGING
 logging_config.dictConfig(LOGGING)
 DOTENV_PATH = find_dotenv(".env")
 load_dotenv(DOTENV_PATH)
+# Корень проекта
+BASE_DIR = Path(__file__).resolve().parent.parent
+STATIC_DIR = BASE_DIR / "static"
 
 
 class AppSettings(BaseSettings):
@@ -58,12 +61,17 @@ class AppSettings(BaseSettings):
 
     # Настройки расписания для воркеров
     periodic_schedule: str = Field(default="* * * * *")  # Каждую минуту
-    scheduled_schedule: str = Field(default="* * * * *")  # Каждую минуту
+    scheduled_schedule: str = Field(default="* * * * *")
+    repeater_schedule: str = Field(default="* * * * *")
 
     # Настройки для пакетной обработки
     scheduled_batch_size: int = Field(
         default=100,
         description="Размер пакета для обработки запланированных уведомлений",
+    )
+    repeater_batch_size: int = Field(
+        default=100,
+        description="Размер пакета для повторной обработки сломанных уведомлений",
     )
 
     # Настройки отправки email
