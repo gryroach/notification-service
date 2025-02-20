@@ -1,5 +1,5 @@
 # thirdparty
-from aio_pika import ExchangeType, Message, connect_robust
+from aio_pika import DeliveryMode, ExchangeType, Message, connect_robust
 from aio_pika.abc import AbstractChannel, AbstractRobustConnection, HeadersType
 from aiormq import AMQPConnectionError
 
@@ -79,6 +79,7 @@ class RabbitMQService:
             body=message_body,
             priority=priority,
             headers=headers,
+            delivery_mode=DeliveryMode.PERSISTENT,
         )
 
         try:
