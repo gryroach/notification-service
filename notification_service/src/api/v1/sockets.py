@@ -37,7 +37,7 @@ async def websocket_endpoint(
     websocket: WebSocket,
     rabbitmq_service: Annotated[RabbitMQService, Depends(RabbitMQService)],
     db: Annotated[AsyncSession, Depends(get_session)],
-    access_token: Annotated[str, Cookie(description="JWT-токен доступа")],
+    access_token: Annotated[str, Cookie(description="JWT-токен доступа")] = "",
 ) -> None:
     await websocket.accept()
     try:

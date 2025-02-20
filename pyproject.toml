@@ -21,6 +21,7 @@ dependencies = [
     "arq<=0.26.3",
     "aiosmtplib>=4.0.0",
     "backoff>=2.2.1",
+    "sqladmin>=0.20.1",
 ]
 
 [dependency-groups]
