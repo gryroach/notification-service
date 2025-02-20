@@ -1,0 +1,90 @@
+version: '3'
+
+services:
+
+  api:
+    build:
+      context: .
+      dockerfile: ./notification_service/Dockerfile
+    container_name: notification_api
+    hostname: api
+    image: notification-api-image
+    env_file:
+      - ./.env
+    expose:
+      - "8000"
+    command: bash entrypoint-api.sh
+    volumes:
+      - ./notification_service/src:/app/src
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+
+  rabbitmq:
+    image: rabbitmq:4.0.5-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    env_file:
+      - ./.env
+    environment:
+      RABBITMQ_DEFAULT_USER: ${NOTIFY_RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${NOTIFY_RABBITMQ_PASSWORD}
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nginx:
+    image: nginx:latest
+    container_name: notification_nginx
+    restart: always
+    volumes:
+      - ./configs/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./configs/nginx/sites:/etc/nginx/conf.d:ro
+    ports:
+      - "80:80"
+
+  db:
+    image: postgres:16
+    container_name: test_postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${NOTIFY_POSTGRES_PASSWORD}
+      - POSTGRES_DB=${NOTIFY_POSTGRES_NAME}
+    ports:
+      - "15432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d ${NOTIFY_POSTGRES_NAME}" ]
+      interval: 5s
+      retries: 5
+      timeout: 5s
+
+  redis:
+    image: redis:7.4.1-alpine
+    container_name: notification_redis
+    restart: always
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+    healthcheck:
+      test: redis-cli ping
+      interval: 1s
+      timeout: 3s
+      retries: 50
+
+  api-test:
+    build:
+      context: .
+      dockerfile: ./notification_service/Dockerfile.test
+    container_name: notification_api_test
+    image: notification-api-image-test
+    env_file:
+      - ./.env
+    command: bash entrypoint-api-test.sh
+    volumes:
+      - ./notification_service/src:/app/src
